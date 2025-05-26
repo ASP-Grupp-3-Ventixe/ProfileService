@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Presentation.Entities;
 using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 
@@ -7,9 +6,9 @@ namespace Presentation.Services;
 
 public interface IProfileService
 {
-    Task<UserProfile?> CreateProfileAsync(UserProfile userProfile);
-    Task<UserProfile?> GetProfileAsync(string userId);
-    Task<bool> UpdateProfileAsync(UserProfile userProfile);
+    Task<UserEntity?> CreateProfileAsync(UserEntity userEntity);
+    Task<UserEntity?> GetProfileAsync(string userId);
+    Task<bool> UpdateProfileAsync(UserEntity userEntity);
     Task<bool> DeleteProfileAsync(string userId);
 }
 
@@ -20,17 +19,17 @@ public class ProfileService(ILogger<ProfileService> logger) : IProfileService
     private readonly string? _serviceBusConnectionString = Environment.GetEnvironmentVariable("ServiceBusConnection");
     private readonly string? _queueName = Environment.GetEnvironmentVariable("UserDeletionQueueName");
 
-    public async Task<UserProfile?> CreateProfileAsync(UserProfile userProfile)
+    public async Task<UserEntity?> CreateProfileAsync(UserEntity userEntity)
     {
-        _logger.LogInformation("Creating profile for UserId: {UserId}", userProfile.UserId);
+        _logger.LogInformation("Creating profile for UserId: {UserId}", userEntity.UserId);
         // TODO: Implement actual profile creation logic (e.g., save to database)
         // For now, let's assume it's successful and return the profile
         // In a real scenario, you would interact with a data store.
         await Task.Delay(100); // Simulate async operation
-        return userProfile; 
+        return userEntity; 
     }
 
-    public async Task<UserProfile?> GetProfileAsync(string userId)
+    public async Task<UserEntity?> GetProfileAsync(string userId)
     {
         _logger.LogInformation("Getting profile for UserId: {UserId}", userId);
         // TODO: Implement actual profile retrieval logic (e.g., fetch from database)
@@ -40,9 +39,9 @@ public class ProfileService(ILogger<ProfileService> logger) : IProfileService
         return null; 
     }
 
-    public async Task<bool> UpdateProfileAsync(UserProfile userProfile)
+    public async Task<bool> UpdateProfileAsync(UserEntity userEntity)
     {
-        _logger.LogInformation("Updating profile for UserId: {UserId}", userProfile.UserId);
+        _logger.LogInformation("Updating profile for UserId: {UserId}", userEntity.UserId);
         // TODO: Implement actual profile update logic (e.g., update in database)
         // For now, let's assume it's successful
         await Task.Delay(100); // Simulate async operation
@@ -94,8 +93,6 @@ public class ProfileService(ILogger<ProfileService> logger) : IProfileService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to send user deletion notification for UserId: {UserId} to queue: {QueueName}", userId, _queueName);
-            // Handle the error appropriately. You might want to implement a retry mechanism
-            // or a dead-letter queue for failed messages. For now, return false.
             return false;
         }
     }
