@@ -9,7 +9,9 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.19.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.25.0-beta.1" />
         <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.0.0" /> 
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0"/>
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.0.1" />
@@ -39,6 +41,9 @@
         <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext"/>
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\Data\Data.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Mappers\" />
     </ItemGroup>
 </Project>

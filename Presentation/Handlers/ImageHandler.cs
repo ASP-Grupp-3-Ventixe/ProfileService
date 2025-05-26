@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Presentation.Handlers;
 
-public class ImageHandler
+public interface IImageHandler
 {
-    
+    Task <string?>  SaveImageAsync(IFormFile? file, string directory);
 }

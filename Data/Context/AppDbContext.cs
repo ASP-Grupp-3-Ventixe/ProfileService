@@ -1,14 +1,13 @@
 using Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Context;
 
-
-
-public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
+public class AppDbContext : IdentityDbContext<UserEntity>
 {
-    public DbSet<UserEntity> Users { get; set; } = null!;
-    public DbSet<UserAddressEntity> UserAddresses { get; set; } = null!;
-
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
     
 }

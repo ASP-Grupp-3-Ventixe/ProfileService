@@ -5,14 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Functions;
 
-public class DeleteProfile
+public class DeleteProfile(ILogger<DeleteProfile> logger)
 {
-    private readonly ILogger<DeleteProfile> _logger;
-
-    public DeleteProfile(ILogger<DeleteProfile> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<DeleteProfile> _logger = logger;
 
     [Function("DeleteProfile")]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
