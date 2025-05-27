@@ -13,10 +13,10 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         
         var configuration = new ConfigurationBuilder()
             .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("local.settings.json", optional: false, reloadOnChange: true)
             .Build();
-        
-        var connectionString = configuration.GetConnectionString("SqlServer");
+
+        var connectionString = configuration.GetSection("Values:SqlConnection").Value;
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
         optionsBuilder.UseSqlServer(connectionString);

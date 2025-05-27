@@ -1,9 +1,13 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Data.Entities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker.Http;
+using Presentation.Helpers;
 using Presentation.Services;
+using Presentation.Responses;
 
 namespace Presentation.Functions;
 
@@ -15,18 +19,43 @@ public class GetProfile(ILogger<GetProfile> logger, IProfileService profileServi
     [Function("GetProfile")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "profile")] HttpRequestData req)
     {
-        // Extrahera JWT och userId från claims
-        var principal = req.FunctionContext.Features.Get<JwtPrincipalFeature>()?.Principal;
-        var userId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        try
+        {
+            var userId = AuthUtils.ExtractUserId(req);
+            if (string.IsNullOrEmpty(userId))
+                return new OkObjectResult(new UserResult
+                {
+                    Succeeded = false, 
+                    StatusCode = 401, 
+                    Error = "Unauthorized"
+                });
 
-        if (string.IsNullOrEmpty(userId))
-            return new UnauthorizedResult();
+            var profile = await _profileService.GetProfileAsync(userId);
+            if (profile == null)
+                return new OkObjectResult(new UserResult 
+                {
+                    Succeeded = false,
+                    StatusCode = 404, 
+                    Error = "Profile not found"
+                });
 
-        var profile = await _profileService.GetProfileAsync(userId);
-        if (profile == null)
-            return new NotFoundResult();
-            
-        _logger.LogInformation("C# HTTP trigger function processed a request.");
-        return new OkObjectResult(profile);
+            _logger.LogInformation("Profile retrieved successfully for user {UserId}", userId);
+            return new OkObjectResult(new UserResult<UserEntity>
+            {
+                Succeeded = true, 
+                StatusCode = 200, 
+                Result = profile
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled exception in GetProfile.");
+            return new OkObjectResult(new UserResult
+            {
+                Succeeded = false, 
+                StatusCode = 500, 
+                Error = "Internal server error while retrieving profile"
+            });
+        }
     }
 }

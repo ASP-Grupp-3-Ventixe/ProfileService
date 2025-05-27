@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Data.Entities;
 
-public class UserEntity : IdentityUser
+public class UserEntity
 {
+    [Key]
     public string UserId { get; set; } = null!;
     
     [ProtectedPersonalData]
